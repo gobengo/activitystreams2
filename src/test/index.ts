@@ -1,12 +1,10 @@
-import * as assert from "assert"
-import * as activitystreams2 from "../"
+import * as assert from 'assert';
+import {jsonLdProfileContentType} from '../core';
 
 if (require.main === module) {
-    main()
-        .then(() => process.exit())
-        .catch(() => process.exit(1))
+  main().then(() => process.exit()).catch(() => process.exit(1));
 }
 
 async function main() {
-    assert.equal(typeof activitystreams2.ASJsonLdProfileContentType, "string")
+  assert.equal(typeof jsonLdProfileContentType, 'string');
 }

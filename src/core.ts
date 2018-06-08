@@ -6,39 +6,50 @@
  * This file is only for stuff in the core spec.
  */
 
-import { ASImage } from "./vocabulary"
+import {ASImage} from './vocabulary';
 
-export type JSONLDContext = OneOrMore<string | {
-    "@vocab"?: string
-    "@language"?: string
-    [key: string]: string | { [key: string]: string },
-}>;
+export const jsonLdProfile = 'https://www.w3.org/ns/activitystreams';
 
-interface IJsonldObject {
-    "@context"?: JSONLDContext;
+// application/ld+json; profile="https://www.w3.org/ns/activitystreams"
+export const jsonLdProfileContentType =
+    `application/ld+json; profile="${jsonLdProfile}"`;
+
+interface JSONLDContextMapping {
+  [key: string]: string|{[key: string]: string};
+}
+export interface JSONObject {
+  [key: string]: string|JSONObject;
+}
+export interface JSONLDContext {
+  '@vocab'?: string;
+  '@language'?: string;
+}
+
+interface JsonLdObject {
+  '@context'?: JSONLDContext&JSONObject;
 }
 
 export type LDIdentifier = xsdAnyUri;
-export type LDValue<T> = (LDIdentifier | T);
-export type LDValues<T> = T | T[];
+export type LDValue<T> = (LDIdentifier|T);
+export type LDValues<T> = T|T[];
 export type LDObject<T> = {
-    [P in keyof T]?: LDValues<T[P]>;
+  [P in keyof T]?: LDValues<T[P]>;
 };
 
 type ISO8601 = string;
 
 export type xsdAnyUri = string;
 
-type OneOrMore<T> = T | T[];
+type OneOrMore<T> = T|T[];
 
 /** @todo (bengo.is) string could be more specific, e.g. LDIdentifier */
-export type ASValue = string | ASObject | ASLink
+export type ASValue = string|ASObject|ASLink;
 
 /** @todo (bengo.is) enumerage lang strings */
-type RdfLangString = string
-interface INaturalLanguageValue {
-    // @TODO (bengo) this could be more specific about keys than just string
-    [key: string]: string
+type RdfLangString = string;
+interface NaturalLanguageValue {
+  // @TODO (bengo) this could be more specific about keys than just string
+  [key: string]: string;
 }
 
 /**
@@ -46,44 +57,44 @@ interface INaturalLanguageValue {
  * This is useful because as:type can be a string or array (for multiple types).
  * ASObjectType<"Link"> should allow ["Link", "someOtherTypeUri"]
  */
-export type ASObjectType<T> = T | T[]
+export type ASObjectType<T> = T|T[];
 
 /**
  * @see https://www.w3.org/TR/activitystreams-core/#object
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-object
  */
-export class ASObject implements IJsonldObject {
-    public "@context": JSONLDContext
-    public attachment?: OneOrMore<ASObject | ASLink>
-    public attributedTo?: LDValue<ASObject>
-    public bcc?: LDValue<ASObject>
-    public cc?: OneOrMore<LDValue<ASObject>>
-    public content?: string
-    public generator?: LDValue<ASObject>
-    public id?: string
-    public image?: OneOrMore<string | ASLink | ASImage>
-    public inReplyTo?: LDValue<ASObject>
-    public location?: ASObject
-    public name?: string
-    public nameMap?: INaturalLanguageValue
-    public preview?: ASValue
-    public published?: ISO8601
-    public replies?: LDValue<Collection<ASObject>>
-    public summary?: string | RdfLangString
-    public tag?: ASObject | ASLink
-    public to?: LDValue<ASObject>
-    public bto?: LDValue<ASObject>
-    public type?: ASObjectType<string>
-    public url?: OneOrMore<xsdAnyUri | ASLink>
+export class ASObject {
+  attachment?: OneOrMore<ASObject|ASLink>;
+  attributedTo?: LDValue<ASObject>;
+  bcc?: LDValue<ASObject>;
+  cc?: OneOrMore<LDValue<ASObject>>;
+  content?: string;
+  generator?: LDValue<ASObject>;
+  id?: string;
+  image?: OneOrMore<string|ASLink|ASImage>;
+  inReplyTo?: LDValue<ASObject>;
+  location?: ASObject;
+  name?: string;
+  nameMap?: NaturalLanguageValue;
+  preview?: ASValue;
+  published?: ISO8601;
+  replies?: LDValue<Collection<ASObject>>;
+  summary?: string|RdfLangString;
+  tag?: ASObject|ASLink;
+  to?: LDValue<ASObject>;
+  bto?: LDValue<ASObject>;
+  type?: ASObjectType<string>;
+  url?: OneOrMore<xsdAnyUri|ASLink>;
 }
 
 /**
  * Test whether an object is an ASObject
  * @param obj - object to test
+ * @todo (bengo.is) check way more than this.
  */
-export const isASObject = (obj: any): obj is ASObject => {
-    return typeof obj === "object"
-}
+export const isASObject = (obj: object): obj is ASObject => {
+  return typeof obj === 'object';
+};
 
 type LinkRelation = string;
 
@@ -91,59 +102,80 @@ type LinkRelation = string;
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-link
  */
 export class ASLink {
-    public type: ASObjectType<"Link">;
-    public href: string;
-    public mediaType?: string;
-    public rel?: LinkRelation;
+  type: ASObjectType<'Link'> = 'Link';
+  href: xsdAnyUri;
+  mediaType?: string;
+  rel?: LinkRelation;
+  constructor(init: {href: xsdAnyUri}&Partial<ASLink>) {
+    Object.assign(this, init);
+    this.href = init.href;
+  }
 }
 
 /**
  * Test whether an object is an ASLink
  * @param obj - object to test whether it is an ASLink
  */
-export const isASLink = (obj: any): obj is ASLink => {
-    return obj.type === "Link";
-}
+export const isASLink = (obj: ASObject): obj is ASLink => {
+  return obj.type === 'Link';
+};
 
 /**
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-activity
  */
 export class Activity extends ASObject {
-    public type: ASObjectType<"Activity" | ActivitySubtype>
-    public actor?: ASValue
-    public object?: LDValue<ASObject>
-    public target?: ASValue
-    constructor(props: any) {
-        super()
-        this.type = this.constructor.name
-        Object.assign(this, props)
-    }
+  type: ASObjectType<'Activity'|ActivitySubtype>;
+  actor?: ASValue;
+  object?: LDValue<ASObject>;
+  target?: ASValue;
+  constructor(props: object) {
+    super();
+    this.type = this.constructor.name;
+    Object.assign(this, props);
+  }
 }
 
 // https://www.w3.org/TR/activitystreams-vocabulary/#activity-types
 export const activitySubtypes = [
-    "Accept", "Add", "Announce", "Arrive", "Block", "Create", "Delete",
-    "Dislike", "Flag", "Follow", "Ignore", "Invite", "Join", "Leave", "Like",
-    "Listen", "Move", "Offer", "Question", "Reject", "Read", "Remove",
-    "TentativeReject", "TentativeAccept", "Travel", "Undo", "Update", "View",
-]
+  'Accept',
+  'Add',
+  'Announce',
+  'Arrive',
+  'Block',
+  'Create',
+  'Delete',
+  'Dislike',
+  'Flag',
+  'Follow',
+  'Ignore',
+  'Invite',
+  'Join',
+  'Leave',
+  'Like',
+  'Listen',
+  'Move',
+  'Offer',
+  'Question',
+  'Reject',
+  'Read',
+  'Remove',
+  'TentativeReject',
+  'TentativeAccept',
+  'Travel',
+  'Undo',
+  'Update',
+  'View',
+];
 
-const strEnum = <T extends string>(o: T[]): { [K in T]: K } => {
-    return o.reduce((res, key) => {
-        res[key] = key
-        return res
-    }, Object.create(null))
-}
+const strEnum = <T extends string>(o: T[]): {[K in T]: K} => {
+  return o.reduce((res, key) => {
+    res[key] = key;
+    return res;
+  }, Object.create(null));
+};
 
-export const ActivitySubtypes = strEnum(activitySubtypes)
-export type ActivitySubtype = keyof typeof ActivitySubtypes
-
-export const isActivity = (activity: any): activity is Activity => {
-    if (typeof activity === "object") {
-        return activitySubtypes.includes(activity.type)
-    }
-    return false
-}
+export const activitySubtypesEnumMap = strEnum(activitySubtypes);
+export type ActivitySubtype = keyof typeof activitySubtypesEnumMap;
 
 /**
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-intransitiveactivity
@@ -155,8 +187,8 @@ export const isActivity = (activity: any): activity is Activity => {
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-collection
  */
 export class Collection<T> extends ASObject {
-    public items?: T[]
-    public totalItems?: number
+  items?: T[];
+  totalItems?: number;
 }
 
 /**
