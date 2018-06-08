@@ -3,8 +3,8 @@ import * as activitystreams2 from "../"
 
 if (require.main === module) {
     main()
-    .then(() => process.exit())
-    .catch(() => process.exit(1))
+        .then(() => process.exit())
+        .catch(() => process.exit(1))
 }
 
 async function main() {
