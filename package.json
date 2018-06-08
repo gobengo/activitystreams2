@@ -19,7 +19,8 @@
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run check",
+    "preversion": "npm test"
   },
   "devDependencies": {
     "@types/node": "^10.3.2",
