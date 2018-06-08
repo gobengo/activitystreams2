@@ -13,6 +13,7 @@
       }
     ],
     "max-classes-per-file": false,
+    "no-unused-variable": true,
     "semicolon": false
   },
   "rulesDirectory": []
