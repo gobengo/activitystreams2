@@ -2,10 +2,21 @@
   "name": "activitystreams2",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "dist/index.js",
+  "types" : "dist/index.d.ts",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts'",
+    "lint-fix": "tslint --fix -c tslint.json 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts'",
+    "test": "ts-node src/test",
+    "tsc": "tsc",
+    "build": "npm run tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^10.3.2",
+    "ts-node": "^6.1.0",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.1"
+  }
 }
