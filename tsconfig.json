@@ -1,24 +1,13 @@
 {
-  "compileOnSave": true,
+  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
-    "noImplicitAny": true,
-    "types": ["node"],
-    "outDir": "dist",
-    "module": "commonjs",
-    "target": "es5",
-    "pretty": true,
-    "lib": [
-      "es7",
-      "es2017"
-    ],
-    "sourceMap": true,
-    "declaration": true
+    "rootDir": "./src",
+    "outDir": "build"
   },
   "include": [
+    "src/*.ts",
     "src/**/*.ts",
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+    "test/*.ts",
+    "test/**/*.ts"
   ]
 }
