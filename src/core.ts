@@ -6,7 +6,7 @@
  * This file is only for stuff in the core spec.
  */
 
-import {ASImage} from './vocabulary';
+import {Image} from './vocabulary';
 
 export const jsonLdProfile = 'https://www.w3.org/ns/activitystreams';
 
@@ -43,7 +43,7 @@ export type xsdAnyUri = string;
 type OneOrMore<T> = T|T[];
 
 /** @todo (bengo.is) string could be more specific, e.g. LDIdentifier */
-export type ASValue = string|ASObject|ASLink;
+export type ASValue = string|ASObject|Link;
 
 /** @todo (bengo.is) enumerage lang strings */
 type RdfLangString = string;
@@ -64,14 +64,14 @@ export type ASObjectType<T> = T|T[];
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-object
  */
 export class ASObject {
-  attachment?: OneOrMore<ASObject|ASLink>;
+  attachment?: OneOrMore<ASObject|Link>;
   attributedTo?: LDValue<ASObject>;
   bcc?: LDValue<ASObject>;
   cc?: OneOrMore<LDValue<ASObject>>;
   content?: string;
   generator?: LDValue<ASObject>;
   id?: string;
-  image?: OneOrMore<string|ASLink|ASImage>;
+  image?: OneOrMore<string|Link|Image>;
   inReplyTo?: LDValue<ASObject>;
   location?: ASObject;
   name?: string;
@@ -80,11 +80,11 @@ export class ASObject {
   published?: ISO8601;
   replies?: LDValue<Collection<ASObject>>;
   summary?: string|RdfLangString;
-  tag?: ASObject|ASLink;
+  tag?: ASObject|Link;
   to?: LDValue<ASObject>;
   bto?: LDValue<ASObject>;
   type?: ASObjectType<string>;
-  url?: OneOrMore<xsdAnyUri|ASLink>;
+  url?: OneOrMore<xsdAnyUri|Link>;
 }
 
 /**
@@ -101,22 +101,22 @@ type LinkRelation = string;
 /**
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-link
  */
-export class ASLink {
+export class Link {
   type: ASObjectType<'Link'> = 'Link';
   href: xsdAnyUri;
   mediaType?: string;
   rel?: LinkRelation;
-  constructor(init: {href: xsdAnyUri}&Partial<ASLink>) {
+  constructor(init: {href: xsdAnyUri}&Partial<Link>) {
     Object.assign(this, init);
     this.href = init.href;
   }
 }
 
 /**
- * Test whether an object is an ASLink
- * @param obj - object to test whether it is an ASLink
+ * Test whether an object is an Link
+ * @param obj - object to test whether it is an Link
  */
-export const isASLink = (obj: ASObject): obj is ASLink => {
+export const isLink = (obj: ASObject): obj is Link => {
   return obj.type === 'Link';
 };
 

@@ -15,7 +15,9 @@ import {ASObject, ASObjectType, xsdAnyUri,} from './core';
 /**
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-image
  */
-export class ASImage extends ASObject {}
+export class Image extends ASObject {
+  type: ASObjectType<'Image'> = 'Image';
+}
 
 /**
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-note
