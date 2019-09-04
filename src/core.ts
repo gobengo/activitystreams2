@@ -57,7 +57,7 @@ interface NaturalLanguageValue {
  * This is useful because as:type can be a string or array (for multiple types).
  * ASObjectType<"Link"> should allow ["Link", "someOtherTypeUri"]
  */
-export type ASObjectType<T> = T|T[];
+export type ASObjectType = OneOrMore<string>;
 
 /**
  * @see https://www.w3.org/TR/activitystreams-core/#object
@@ -83,7 +83,7 @@ export class ASObject {
   tag?: ASObject|Link;
   to?: LDValue<ASObject>;
   bto?: LDValue<ASObject>;
-  type?: ASObjectType<string>;
+  type?: ASObjectType;
   url?: OneOrMore<xsdAnyUri|Link>;
 }
 
@@ -102,7 +102,7 @@ type LinkRelation = string;
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-link
  */
 export class Link {
-  type: ASObjectType<'Link'> = 'Link';
+  type: ASObjectType = 'Link';
   href: xsdAnyUri;
   mediaType?: string;
   rel?: LinkRelation;
@@ -124,7 +124,6 @@ export const isLink = (obj: ASObject): obj is Link => {
  * @see https://www.w3.org/TR/activitystreams-vocabulary/#dfn-activity
  */
 export class Activity extends ASObject {
-  type: ASObjectType<'Activity'|ActivitySubtype>;
   actor?: ASValue;
   object?: LDValue<ASObject>;
   target?: ASValue;
